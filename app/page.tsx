@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Shield, Users, Smartphone, Zap, MapPin, Search, Heart, Bell, Clock, MessageSquare, DollarSign, Star } from 'lucide-react';
@@ -84,11 +83,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Image 
+              <img 
                 src="/logo.png" 
                 alt="Singr Karaoke" 
-                width={32} 
-                height={32}
                 className="h-8 w-8"
               />
               <span className="ml-2 text-xl font-bold text-gray-900">Singr Karaoke Connect</span>
@@ -110,11 +107,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="text-center">
             <div className="flex justify-center mb-8">
-              <Image 
+              <img 
                 src="/logo.png" 
                 alt="Singr Karaoke" 
-                width={120} 
-                height={120}
                 className="h-20 w-20 md:h-30 md:w-30"
               />
             </div>
@@ -352,11 +347,9 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0">
-              <Image 
+              <img 
                 src="/logo.png" 
                 alt="Singr Karaoke" 
-                width={32} 
-                height={32}
                 className="h-8 w-8 brightness-0 invert"
               />
               <span className="ml-2 text-xl font-bold">Singr Karaoke Connect</span>

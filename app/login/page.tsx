@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, LoginInput } from '@/lib/validations';
 import { Loader2 } from 'lucide-react';
-import Image from 'next/image';
 
 /**
  * User login page
@@ -66,11 +65,9 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center">
-            <Image 
+            <img 
               src="/logo.png" 
               alt="Singr Karaoke" 
-              width={32} 
-              height={32}
               className="h-8 w-8"
             />
             <span className="ml-2 text-xl font-bold text-gray-900">Singr Karaoke Connect</span>

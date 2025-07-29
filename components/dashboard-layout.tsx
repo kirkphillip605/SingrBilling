@@ -24,7 +24,6 @@ import {
   Home,
   Receipt,
 } from 'lucide-react';
-import Image from 'next/image';
 
 interface User {
   id: string;
@@ -113,11 +112,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Logo and Navigation */}
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center">
-                <Image 
+                <img 
                   src="/logo.png" 
                   alt="Singr Karaoke" 
-                  width={32} 
-                  height={32}
                   className="h-8 w-8"
                 />
                 <span className="ml-2 text-xl font-bold text-gray-900">Singr Karaoke Connect</span>
@@ -149,11 +146,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </SheetTrigger>
                   <SheetContent side="left" className="w-64">
                     <div className="flex items-center mb-8">
-                      <Image 
+                      <img 
                         src="/logo.png" 
                         alt="Singr Karaoke" 
-                        width={24} 
-                        height={24}
                         className="h-6 w-6"
                       />
                       <span className="ml-2 text-lg font-bold">Singr Karaoke Connect</span>
