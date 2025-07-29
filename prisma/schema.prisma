@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  firstName      String   @map("first_name")
+  lastName       String   @map("last_name")
+  businessName   String?  @map("business_name")
+  phone          String?
+  email          String   @unique
+  passwordHash   String   @map("password_hash")
+  billingAddress String?  @map("billing_address")
+  city           String?
+  state          String?
+  zip            String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  customer            StripeCustomer?
+  subscriptions       Subscription[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @map("user_id")
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("password_reset_tokens")
+}
+
+model StripeCustomer {
+  id               String   @id @default(uuid())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String   @unique @map("user_id")
+  stripeCustomerId String   @unique @map("stripe_customer_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("stripe_customers")
+}
+
+model Subscription {
+  id                   String    @id @default(uuid())
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String    @map("user_id")
+  stripeSubscriptionId String    @unique @map("stripe_subscription_id")
+  planInterval         String    @map("plan_interval") // "month", "quarter", "semiannual", "year"
+  status               String // "active", "canceled", "past_due", etc.
+  currentPeriodStart   DateTime? @map("current_period_start")
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model Plan {
+  id            String   @id // e.g. "monthly", "quarterly", "semiannual", "annual"
+  stripePriceId String   @unique @map("stripe_price_id")
+  name          String
+  interval      String // "month", "quarter", "semiannual", "year"
+  amountCents   Int      @map("amount_cents")
+  description   String?
+  features      Json     @db.JsonB // JSON array of features
+  popular       Boolean  @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("plans")
+}
