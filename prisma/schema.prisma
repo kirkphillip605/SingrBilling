@@ -78,7 +78,7 @@ model Plan {
   interval      String // "month", "quarter", "semiannual", "year"
   amountCents   Int      @map("amount_cents")
   description   String?
-  features      Json     @db.JsonB // JSON array of features
+  features      String[] // JSON array of features
   popular       Boolean  @default(false)
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
