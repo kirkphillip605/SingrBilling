@@ -7,7 +7,8 @@ import { createSuccessResponse } from '@/lib/api-response';
  */
 export async function POST() {
   // Clear auth cookie
-  cookies().set('auth-token', '', {
+  const cookieStore = await cookies();
+  cookieStore.set('auth-token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
