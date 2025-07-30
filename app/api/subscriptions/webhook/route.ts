@@ -76,12 +76,26 @@ export async function POST(request: NextRequest) {
  */
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   if (!session.subscription || !session.metadata?.userId) {
-    console.error('Missing subscription or user ID in checkout session');
+    console.error('Missing subscription or user ID in checkout session:', {
+      subscription: session.subscription,
+      userId: session.metadata?.userId,
+      sessionId: session.id,
+    });
     return;
   }
   
   try {
     const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+    
+    // Check if subscription already exists to prevent duplicates
+    const existingSubscription = await prisma.subscription.findUnique({
+      where: { stripeSubscriptionId: subscription.id },
+    });
+    
+    if (existingSubscription) {
+      console.log('Subscription already exists, skipping creation:', subscription.id);
+      return;
+    }
     
     await prisma.subscription.create({
       data: {

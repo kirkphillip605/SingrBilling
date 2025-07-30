@@ -11,8 +11,16 @@ const protectedRoutes = ['/dashboard', '/billing', '/profile'];
 // Routes that should redirect authenticated users
 const authRoutes = ['/login', '/register'];
 
+// Public routes that don't require authentication
+const publicRoutes = ['/', '/forgot-password', '/reset-password'];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Allow public routes
+  if (publicRoutes.some(route => pathname === route || pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
   
   // Get current user from token
   const user = await getCurrentUser(request);

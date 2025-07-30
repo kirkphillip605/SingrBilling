@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/dashboard-layout';
+import { LoadingSpinner, CardLoadingSpinner } from '@/components/loading-spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -121,9 +122,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
+        <CardLoadingSpinner text="Loading dashboard..." />
       </DashboardLayout>
     );
   }

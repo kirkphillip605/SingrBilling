@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DashboardLayout } from '@/components/dashboard-layout';
+import { LoadingSpinner, CardLoadingSpinner } from '@/components/loading-spinner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -98,6 +99,12 @@ export default function BillingPage() {
   };
 
   const handleSubscribe = async (priceId: string, planId: string) => {
+    // Prevent multiple subscriptions of the same type
+    if (activeSubscription && activeSubscription.planInterval === planId) {
+      toast.error('You already have this plan active');
+      return;
+    }
+    
     setIsProcessing(planId);
 
     // Check if Stripe is properly configured
@@ -224,9 +231,7 @@ export default function BillingPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
+        <CardLoadingSpinner text="Loading billing information..." />
       </DashboardLayout>
     );
   }
@@ -315,6 +320,11 @@ export default function BillingPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plans.length === 0 && !isLoading && (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500">No plans available at this time.</p>
+              </div>
+            )}
             {plans.map((plan) => (
               <Card
                 key={plan.id}
@@ -362,14 +372,19 @@ export default function BillingPage() {
                     className="w-full"
                     variant={plan.popular ? "default" : "outline"}
                     onClick={() => handleSubscribe(plan.stripePriceId, plan.id)}
-                    disabled={isProcessing === plan.id}
+                    disabled={
+                      isProcessing === plan.id || 
+                      (activeSubscription && activeSubscription.planInterval === plan.interval)
+                    }
                   >
                     {isProcessing === plan.id && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
                     {activeSubscription && activeSubscription.planInterval === plan.interval
                       ? 'Current Plan'
-                      : 'Select Plan'
+                      : isProcessing === plan.id 
+                        ? 'Processing...' 
+                        : 'Select Plan'
                     }
                   </Button>
                 </CardContent>

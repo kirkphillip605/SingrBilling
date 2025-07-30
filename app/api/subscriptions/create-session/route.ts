@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true`,
       metadata: {
         userId: currentUser.userId,
+        planId: priceId,
       },
     });
     

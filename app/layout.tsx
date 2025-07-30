@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next/metadata';
 import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-          {children}
-        </div>
-        <Toaster />
+        <ErrorBoundary>
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+            {children}
+          </div>
+          <Toaster />
+        </ErrorBoundary>
       </body>
     </html>
   );
