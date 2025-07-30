@@ -21,10 +21,7 @@ export interface EmailOptions {
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
   try {
-    const request = await Mailjet.connect(
-      process.env.MAILJET_API_KEY!,
-      process.env.MAILJET_SECRET_KEY!
-    )
+    const request = await mailjet
       .post('send', { version: 'v3.1' })
       .request({
         Messages: [
