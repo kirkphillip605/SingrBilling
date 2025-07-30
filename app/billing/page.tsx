@@ -18,7 +18,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 // Initialize Stripe with proper error handling
 const getStripePromise = () => {
-  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const publishableKey = process.env.NEXT_STRIPE_PUBLISHABLE_KEY;
   if (!publishableKey) {
     console.error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not configured');
     return null;
