@@ -301,6 +301,11 @@ export default function HomePage() {
                         <CheckCircle className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className="w-full" 
+                    variant={plan.popular ? "default" : "outline"}
                     onClick={(e) => {
                       e.preventDefault();
                       // Check if user is authenticated
@@ -313,6 +318,10 @@ export default function HomePage() {
                           } else {
                             // User not authenticated, redirect to register with plan intent
                             window.location.href = `/register?intent=plan&planId=${plan.id}&priceId=${plan.stripePriceId}`;
+                          }
+                        });
+                    }}
+                  >
                     Choose {plan.name}
                   </Button>
                 </CardContent>
