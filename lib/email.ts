@@ -1,14 +1,13 @@
-import Mailjet from 'node-mailjet';
+import * as Mailjet from 'node-mailjet';
 
 /**
  * Email service using Mailjet for transactional emails
  */
 
-const mailjet = new Mailjet({
-  apiKey: process.env.MAILJET_API_KEY!,
-  apiSecret: process.env.MAILJET_SECRET_KEY!
-}
-)
+const mailjet = Mailjet.connect(
+  process.env.MAILJET_API_KEY!,
+  process.env.MAILJET_SECRET_KEY!
+);
 
 export interface EmailOptions {
   to: string;
@@ -22,7 +21,10 @@ export interface EmailOptions {
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
   try {
-    const request = await mailjet
+    const request = await Mailjet.connect(
+      process.env.MAILJET_API_KEY!,
+      process.env.MAILJET_SECRET_KEY!
+    )
       .post('send', { version: 'v3.1' })
       .request({
         Messages: [
