@@ -114,7 +114,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center">
                 <img 
-                  src="/logo.png" 
+                  src="/singr-logo.png" 
                   alt="Singr Karaoke" 
                   className="h-8 w-8"
                 />
@@ -148,7 +148,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   <SheetContent side="left" className="w-64">
                     <div className="flex items-center mb-8">
                       <img 
-                        src="/logo.png" 
+                        src="/singr-logo.png" 
                         alt="Singr Karaoke" 
                         className="h-6 w-6"
                       />

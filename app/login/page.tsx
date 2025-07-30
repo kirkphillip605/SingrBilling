@@ -66,7 +66,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center">
             <img 
-              src="/logo.png" 
+              src="/singr-logo.png" 
               alt="Singr Karaoke" 
               className="h-8 w-8"
             />
