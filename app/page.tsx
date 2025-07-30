@@ -125,7 +125,14 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/register">
-                <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-lg px-8 py-3">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-lg px-8 py-3"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/register?intent=trial';
+                  }}
+                >
                   Start Free Trial
                 </Button>
               </Link>
@@ -294,12 +301,18 @@ export default function HomePage() {
                         <CheckCircle className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : 'border-primary text-primary hover:bg-primary hover:text-white'}`}
-                    variant={plan.popular ? "default" : "outline"}
-                  >
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // Check if user is authenticated
+                      fetch('/api/user/profile')
+                        .then(response => response.json())
+                        .then(result => {
+                          if (result.success) {
+                            // User is authenticated, proceed to checkout
+                            handleSubscribe(plan.stripePriceId, plan.id);
+                          } else {
+                            // User not authenticated, redirect to register with plan intent
+                            window.location.href = `/register?intent=plan&planId=${plan.id}&priceId=${plan.stripePriceId}`;
                     Choose {plan.name}
                   </Button>
                 </CardContent>
@@ -309,7 +322,14 @@ export default function HomePage() {
 
           <div className="text-center mt-12">
             <Link href="/register">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-3">
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-lg px-8 py-3"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/register?intent=trial';
+                }}
+              >
                 Start Your Free Trial Today
               </Button>
             </Link>
@@ -331,7 +351,15 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto text-lg px-8 py-3">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="w-full sm:w-auto text-lg px-8 py-3"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/register?intent=trial';
+                }}
+              >
                 Start Free Trial
               </Button>
             </Link>

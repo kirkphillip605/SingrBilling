@@ -47,7 +47,20 @@ export default function LoginPage() {
 
       if (result.success) {
         toast.success('Signed in successfully!');
-        router.push(redirectUrl);
+        
+        // Check for special intents in redirect URL
+        const url = new URL(redirectUrl, window.location.origin);
+        const intent = url.searchParams.get('intent');
+        const planId = url.searchParams.get('planId');
+        const priceId = url.searchParams.get('priceId');
+        
+        if (intent === 'trial') {
+          router.push('/billing?intent=trial');
+        } else if (intent === 'plan' && planId && priceId) {
+          router.push(`/billing?intent=checkout&planId=${planId}&priceId=${priceId}`);
+        } else {
+          router.push(redirectUrl);
+        }
       } else {
         toast.error(result.error?.message || 'Sign in failed');
       }

@@ -20,6 +20,10 @@ import { Loader2 } from 'lucide-react';
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const intent = searchParams.get('intent');
+  const planId = searchParams.get('planId');
+  const priceId = searchParams.get('priceId');
 
   const {
     register,
@@ -45,7 +49,18 @@ export default function RegisterPage() {
 
       if (result.success) {
         toast.success('Account created successfully!');
-        router.push('/dashboard');
+        
+        // Handle different registration intents
+        if (intent === 'trial') {
+          // Redirect to billing with trial intent
+          router.push('/billing?intent=trial');
+        } else if (intent === 'plan' && planId && priceId) {
+          // Redirect to checkout for specific plan
+          router.push(`/billing?intent=checkout&planId=${planId}&priceId=${priceId}`);
+        } else {
+          // Default to dashboard
+          router.push('/dashboard');
+        }
       } else {
         toast.error(result.error?.message || 'Registration failed');
       }

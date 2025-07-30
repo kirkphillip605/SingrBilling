@@ -56,6 +56,7 @@ export default function BillingPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -198,6 +199,56 @@ export default function BillingPage() {
     }
   };
 
+  const handleOpenCustomerPortal = async () => {
+    setIsOpeningPortal(true);
+    
+    try {
+      const response = await fetch('/api/subscriptions/portal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data.url) {
+        window.location.href = result.data.url;
+      } else {
+        toast.error('Failed to open customer portal');
+      }
+    } catch (error) {
+      console.error('Customer portal error:', error);
+      toast.error('An unexpected error occurred');
+    } finally {
+      setIsOpeningPortal(false);
+    }
+  };
+
+  const handleSyncBilling = async (direction: 'to_stripe' | 'from_stripe') => {
+    try {
+      const response = await fetch('/api/user/sync-billing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ direction }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success(result.data.message);
+        fetchBillingData(); // Refresh data
+      } else {
+        toast.error(result.error?.message || 'Failed to sync billing information');
+      }
+    } catch (error) {
+      console.error('Sync billing error:', error);
+      toast.error('An unexpected error occurred');
+    }
+  };
+
   const formatPrice = (amountCents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -281,16 +332,39 @@ export default function BillingPage() {
                     Reactivate Subscription
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => handleCancelSubscription(activeSubscription.id)}
-                    variant="outline"
-                    className="text-red-600 border-red-300 hover:bg-red-50"
-                  >
-                    Cancel Subscription
-                  </Button>
+                  <>
+                    <Button
+                      onClick={handleOpenCustomerPortal}
+                      disabled={isOpeningPortal}
+                    >
+                      {isOpeningPortal && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Manage Subscription
+                    </Button>
+                    <Button
+                      onClick={() => handleCancelSubscription(activeSubscription.id)}
+                      variant="outline"
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      Cancel Subscription
+                    </Button>
+                  </>
                 )}
-                <Button variant="outline">
-                  Update Payment Method
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                <Button
+                  onClick={() => handleSyncBilling('to_stripe')}
+                  variant="outline"
+                  size="sm"
+                  >
+                  Sync Address to Stripe
+                </Button>
+                <Button
+                  onClick={() => handleSyncBilling('from_stripe')}
+                  variant="outline"
+                  size="sm"
+                >
+                  Sync Address from Stripe
                 </Button>
               </div>
 

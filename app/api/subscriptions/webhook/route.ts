@@ -60,6 +60,14 @@ export async function POST(request: NextRequest) {
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
         
+      case 'customer.updated':
+        await handleCustomerUpdated(event.data.object as Stripe.Customer);
+        break;
+        
+      case 'payment_method.attached':
+        await handlePaymentMethodAttached(event.data.object as Stripe.PaymentMethod);
+        break;
+        
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -190,5 +198,62 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     console.log('Subscription canceled:', subscription.id);
   } catch (error) {
     console.error('Error handling subscription deleted:', error);
+  }
+}
+
+/**
+ * Handle customer updated (for billing address sync)
+ */
+async function handleCustomerUpdated(customer: Stripe.Customer) {
+  try {
+    // Find user by Stripe customer ID
+    const stripeCustomer = await prisma.stripeCustomer.findUnique({
+      where: { stripeCustomerId: customer.id },
+      include: { user: true },
+    });
+    
+    if (!stripeCustomer) {
+      console.log('Customer not found in database:', customer.id);
+      return;
+    }
+    
+    // Update user with billing address from Stripe
+    const updateData: any = {};
+    
+    if (customer.address) {
+      updateData.billingAddress = customer.address.line1;
+      updateData.city = customer.address.city;
+      updateData.state = customer.address.state;
+      updateData.zip = customer.address.postal_code;
+    }
+    
+    if (customer.phone && customer.phone !== stripeCustomer.user.phone) {
+      updateData.phone = customer.phone;
+    }
+    
+    if (Object.keys(updateData).length > 0) {
+      await prisma.user.update({
+        where: { id: stripeCustomer.userId },
+        data: updateData,
+      });
+      
+      console.log('User billing information updated from Stripe:', stripeCustomer.userId);
+    }
+  } catch (error) {
+    console.error('Error handling customer updated:', error);
+  }
+}
+
+/**
+ * Handle payment method attached
+ */
+async function handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod) {
+  try {
+    if (paymentMethod.customer) {
+      console.log('Payment method attached to customer:', paymentMethod.customer);
+      // Could add logic to update default payment method if needed
+    }
+  } catch (error) {
+    console.error('Error handling payment method attached:', error);
   }
 }

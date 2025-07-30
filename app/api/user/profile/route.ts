@@ -84,6 +84,33 @@ export async function PUT(request: NextRequest) {
       },
     });
     
+    // Sync billing address to Stripe if it was updated
+    if (validatedData.billingAddress || validatedData.city || validatedData.state || validatedData.zip) {
+      try {
+        const stripeCustomer = await prisma.stripeCustomer.findUnique({
+          where: { userId: currentUser.userId },
+        });
+        
+        if (stripeCustomer) {
+          await updateStripeCustomer({
+            customerId: stripeCustomer.stripeCustomerId,
+            name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+            phone: updatedUser.phone || undefined,
+            address: {
+              line1: updatedUser.billingAddress || undefined,
+              city: updatedUser.city || undefined,
+              state: updatedUser.state || undefined,
+              postal_code: updatedUser.zip || undefined,
+              country: 'US',
+            },
+          });
+        }
+      } catch (stripeError) {
+        console.error('Failed to sync billing address to Stripe:', stripeError);
+        // Continue anyway - don't fail the profile update
+      }
+    }
+    
     return createSuccessResponse({
       user: updatedUser,
       message: 'Profile updated successfully',

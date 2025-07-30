@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
     
     const body = await request.json();
-    const { priceId } = body;
+    const { priceId, trialDays, mode = 'subscription' } = body;
     
     if (!priceId) {
       return handleApiError(
@@ -50,6 +50,21 @@ export async function POST(request: NextRequest) {
       metadata: {
         userId: currentUser.userId,
         planId: priceId,
+      },
+      subscriptionData: {
+        trial_period_days: trialDays,
+        metadata: {
+          userId: currentUser.userId,
+          planId: priceId,
+        },
+      },
+      automaticTax: {
+        enabled: true,
+      },
+      billingAddressCollection: 'required',
+      customerUpdate: {
+        address: 'auto',
+        name: 'auto',
       },
     });
     
